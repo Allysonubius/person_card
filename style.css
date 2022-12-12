@@ -16,7 +16,7 @@
     overflow: hidden;
     font-family: "Lato", sans-serif;
     letter-spacing: 0.5px;
-    font-weight: 500;
+    font-weight: 400;
 }
 
 .black-theme:before {
@@ -31,8 +31,8 @@
 }
 
 .black-theme .card {
-    width: 500px;
-    height: 600px;
+    width: 50rem;
+    height: 50rem;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.05);
@@ -41,19 +41,17 @@
 }
 
 .black-theme .card .card__top {
-    height: 150px;
+    height: 7rem;
     position: relative;
 }
 
 .black-theme .card .card__top img {
     width: 100%;
-    height: 100%;
     object-fit: cover;
 }
 
 .black-theme .card .card__top .profile__photo {
-    width: 160px;
-    height: 160px;
+    width: 9.5rem;
     position: absolute;
     bottom: -60px;
     left: 50%;
@@ -62,7 +60,7 @@
 
 .black-theme .card .card__top .profile__photo img {
     width: 100%;
-    border-radius: 100%;
+    border-radius: 50%;
     height: 100%;
     object-fit: cover;
     border: 8px solid rgba(0, 0, 0, 0.35);
@@ -76,13 +74,11 @@
 
 .black-theme .card .card__content h2 {
     font-weight: 700;
-    font-size: 18px;
 }
 
 .black-theme .card .card__content h3 {
     font-weight: 400;
     margin: 5px 5 30px;
-    font-size: 16px;
 }
 
 .black-theme .card .card__content p {
@@ -116,7 +112,7 @@
 }
 
 .black-theme .card a.button:hover {
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(29, 163, 49, 0.957);
 }
 
 .white-theme {
@@ -130,7 +126,7 @@
     overflow: hidden;
     font-family: "Lato", sans-serif;
     letter-spacing: 0.5px;
-    font-weight: 500;
+    font-weight: 400;
 }
 
 .white-theme:before {
@@ -145,8 +141,8 @@
 }
 
 .white-theme .card {
-    width: 500px;
-    height: 600px;
+    width: 50rem;
+    height: 50rem;
     background: rgba(255, 255, 255, 0.3);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     backdrop-filter: blur(4px);
@@ -155,19 +151,17 @@
 }
 
 .white-theme .card .card__top {
-    height: 150px;
+    height: 7rem;
     position: relative;
 }
 
 .white-theme .card .card__top img {
     width: 100%;
-    height: 100%;
     object-fit: cover;
 }
 
 .white-theme .card .card__top .profile__photo {
-    width: 160px;
-    height: 160px;
+    width: 9.5rem;
     position: absolute;
     bottom: -60px;
     left: 50%;
@@ -190,13 +184,11 @@
 
 .white-theme .card .card__content h2 {
     font-weight: 700;
-    font-size: 18px;
 }
 
 .white-theme .card .card__content h3 {
     font-weight: 400;
     margin: 5px 5 30px;
-    font-size: 16px;
 }
 
 .white-theme .card .card__content p {
@@ -220,6 +212,10 @@
     margin-top: 5px;
 }
 
+.button-radius {
+    border-radius: 1.6rem;
+}
+
 .white-theme .card a.button {
     text-decoration: none;
     color: #fff;
@@ -230,7 +226,7 @@
 }
 
 .white-theme .card a.button:hover {
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(29, 163, 49, 0.957);
 }
 
 #switch {
@@ -262,4 +258,31 @@
     100% {
         transform: rotate(360deg);
     }
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #1931a2;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    margin-left: -60px;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    margin-top: 1rem;
 }
