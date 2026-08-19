@@ -202,8 +202,36 @@ function changePage(delta) {
    Tela de bloqueio
    ------------------------------------------------------------ */
 
+/* ------------------------------------------------------------
+   Música
+
+   O player começa a tocar assim que a página carrega. Navegadores bloqueiam
+   áudio COM SOM antes de qualquer interação, mas permitem reprodução muda —
+   então o vídeo parte mudo e o som entra sozinho no primeiro gesto do
+   usuário (clique, tecla ou toque), via comando à API do player.
+   ------------------------------------------------------------ */
+
+const YT_ORIGIN = "https://www.youtube-nocookie.com";
+let audioUnlocked = false;
+
+/** Envia um comando à API do player embutido. */
+function ytCommand(func, args = []) {
+  const frame = $("ytPlayer");
+  if (!frame || !frame.contentWindow) return;
+  frame.contentWindow.postMessage(
+    JSON.stringify({ event: "command", func, args }),
+    YT_ORIGIN,
+  );
+}
+
+/** Tira o player do mudo e aplica o volume atual dos ajustes rápidos. */
+function unmutePlayer() {
+  ytCommand("unMute");
+  ytCommand("setVolume", [Number($("volumeRange").value)]);
+}
+
 /**
- * Inicia a música ainda com a tela bloqueada.
+ * Inicia a música com a tela ainda bloqueada.
  *
  * A área de trabalho é revelada por baixo da tela de bloqueio — que é opaca e
  * cobre a viewport inteira — para que o iframe seja renderizado de verdade.
@@ -211,47 +239,27 @@ function changePage(delta) {
  * no DOM depois faria o vídeo recarregar. Assim a faixa continua tocando sem
  * reiniciar quando o usuário entra.
  */
-function startMusicEarly() {
+function startMusic() {
   if (openWindows.has("music")) return;
   $("desktop").classList.remove("hidden");
   if (!$("lock").classList.contains("hidden")) {
     $("desktop").setAttribute("inert", ""); // inacessível enquanto bloqueado
   }
   openApp("music", { focus: false });
-  updateLockMusic();
 }
 
-function stopMusic() {
-  closeWindow("music");
-  updateLockMusic();
-}
-
-function updateLockMusic() {
-  const playing = openWindows.has("music");
-  $("lockMusic").classList.toggle("is-playing", playing);
-  $("lockMusicLabel").textContent = playing ? "Tocando" : "Tocar música";
-}
-
-/**
- * Navegadores só liberam áudio com som após uma interação do usuário. Este
- * gatilho aproveita o primeiro toque ou tecla na tela de bloqueio.
- */
-let autoMusicArmed = false;
-
-function armAutoMusic() {
-  if (autoMusicArmed) return;
-  autoMusicArmed = true;
+/** Aguarda o primeiro gesto do usuário para liberar o som. */
+function armAudioUnlock() {
+  const events = ["pointerdown", "keydown", "touchend"];
 
   const trigger = () => {
-    if ($("lock").classList.contains("hidden")) return;
-    autoMusicArmed = false;
-    document.removeEventListener("pointerdown", trigger);
-    document.removeEventListener("keydown", trigger);
-    startMusicEarly();
+    audioUnlocked = true;
+    for (const type of events) document.removeEventListener(type, trigger);
+    // O player pode ainda não estar pronto; algumas tentativas resolvem.
+    for (const delay of [0, 400, 1200]) setTimeout(unmutePlayer, delay);
   };
 
-  document.addEventListener("pointerdown", trigger);
-  document.addEventListener("keydown", trigger);
+  for (const type of events) document.addEventListener(type, trigger);
 }
 
 function unlock() {
@@ -279,8 +287,7 @@ function lockScreen() {
   setActiveAppName("Início");
   $("lockPass").value = "";
   $("lock").classList.remove("hidden");
-  updateLockMusic();
-  armAutoMusic();
+  startMusic(); // a trilha volta junto com a tela de bloqueio
 }
 
 /* ------------------------------------------------------------
@@ -731,19 +738,23 @@ function buildContact() {
 }
 
 function buildMusic() {
-  return [
-    el("div", { class: "content-area" }, [
-      el("iframe", {
-        id: "ytPlayer",
-        src: "https://www.youtube-nocookie.com/embed/SJxOaqjeeQ4?autoplay=1&playsinline=1",
-        title: "Player de música",
-        allow: "autoplay; encrypted-media; picture-in-picture",
-        referrerpolicy: "strict-origin-when-cross-origin",
-        allowfullscreen: "",
-        loading: "lazy",
-      }),
-    ]),
-  ];
+  // mute=1 é o que permite o autoplay no carregamento; o som entra depois,
+  // no primeiro gesto do usuário. enablejsapi=1 habilita os comandos.
+  const frame = el("iframe", {
+    id: "ytPlayer",
+    src: `${YT_ORIGIN}/embed/SJxOaqjeeQ4?autoplay=1&mute=1&playsinline=1&enablejsapi=1`,
+    title: "Player de música",
+    allow: "autoplay; encrypted-media; picture-in-picture",
+    referrerpolicy: "strict-origin-when-cross-origin",
+    allowfullscreen: "",
+  });
+
+  // Se o som já foi liberado, um player recriado volta com áudio.
+  frame.addEventListener("load", () => {
+    if (audioUnlocked) setTimeout(unmutePlayer, 400);
+  });
+
+  return [el("div", { class: "content-area" }, [frame])];
 }
 
 const APPS = {
@@ -1020,8 +1031,13 @@ function togglePopover(panelId, btnId) {
 }
 
 function setVolume(value) {
+  const level = Number(value);
   $("volumeLabel").textContent = `${value}%`;
-  $("soundIcon").textContent = Number(value) === 0 ? "🔇" : "🔊";
+  $("soundIcon").textContent = level === 0 ? "🔇" : "🔊";
+
+  // O controle age sobre o player de verdade, não apenas sobre o rótulo.
+  ytCommand("setVolume", [level]);
+  ytCommand(level === 0 ? "mute" : "unMute");
 }
 
 /* ------------------------------------------------------------
@@ -1052,13 +1068,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   $("lockBtn").addEventListener("click", lockScreen);
 
-  $("lockMusic").addEventListener("click", (e) => {
-    e.stopPropagation();
-    if (openWindows.has("music")) stopMusic();
-    else startMusicEarly();
-  });
-
-  armAutoMusic();
+  armAudioUnlock();
+  startMusic(); // toca desde o carregamento, atrás da tela de bloqueio
   $("prevBtn").addEventListener("click", () => changePage(-1));
   $("nextBtn").addEventListener("click", () => changePage(1));
   $("volumeRange").addEventListener("input", (e) => setVolume(e.target.value));

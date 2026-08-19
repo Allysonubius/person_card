@@ -220,54 +220,6 @@ button {
   margin-top: 4px;
 }
 
-.lock-music {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: 6px;
-  padding: 6px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  color: rgba(255, 255, 255, 0.88);
-  font-size: 0.75rem;
-  cursor: pointer;
-  transition:
-    background 0.18s,
-    border-color 0.18s;
-}
-
-.lock-music:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.lock-music .note {
-  font-size: 0.85rem;
-}
-
-/* Enquanto toca, a nota pulsa suavemente */
-.lock-music.is-playing {
-  border-color: rgba(255, 255, 255, 0.5);
-}
-
-.lock-music.is-playing .note {
-  animation: pulse 1.6s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.45;
-    transform: scale(1.18);
-  }
-}
-
 @keyframes fade-in {
   from {
     opacity: 0;
