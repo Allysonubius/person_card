@@ -202,15 +202,72 @@ function changePage(delta) {
    Tela de bloqueio
    ------------------------------------------------------------ */
 
+/**
+ * Inicia a música ainda com a tela bloqueada.
+ *
+ * A área de trabalho é revelada por baixo da tela de bloqueio — que é opaca e
+ * cobre a viewport inteira — para que o iframe seja renderizado de verdade.
+ * Um iframe dentro de `display:none` não reproduz áudio, e mover o elemento
+ * no DOM depois faria o vídeo recarregar. Assim a faixa continua tocando sem
+ * reiniciar quando o usuário entra.
+ */
+function startMusicEarly() {
+  if (openWindows.has("music")) return;
+  $("desktop").classList.remove("hidden");
+  if (!$("lock").classList.contains("hidden")) {
+    $("desktop").setAttribute("inert", ""); // inacessível enquanto bloqueado
+  }
+  openApp("music", { focus: false });
+  updateLockMusic();
+}
+
+function stopMusic() {
+  closeWindow("music");
+  updateLockMusic();
+}
+
+function updateLockMusic() {
+  const playing = openWindows.has("music");
+  $("lockMusic").classList.toggle("is-playing", playing);
+  $("lockMusicLabel").textContent = playing ? "Tocando" : "Tocar música";
+}
+
+/**
+ * Navegadores só liberam áudio com som após uma interação do usuário. Este
+ * gatilho aproveita o primeiro toque ou tecla na tela de bloqueio.
+ */
+let autoMusicArmed = false;
+
+function armAutoMusic() {
+  if (autoMusicArmed) return;
+  autoMusicArmed = true;
+
+  const trigger = () => {
+    if ($("lock").classList.contains("hidden")) return;
+    autoMusicArmed = false;
+    document.removeEventListener("pointerdown", trigger);
+    document.removeEventListener("keydown", trigger);
+    startMusicEarly();
+  };
+
+  document.addEventListener("pointerdown", trigger);
+  document.addEventListener("keydown", trigger);
+}
+
 function unlock() {
   const lock = $("lock");
   lock.classList.add("is-unlocking");
   $("desktop").classList.remove("hidden");
+  $("desktop").removeAttribute("inert");
   setTimeout(() => {
     lock.classList.add("hidden");
     lock.classList.remove("is-unlocking");
   }, 550);
-  if (!isMobile()) openApp("about");
+
+  // Se a música já tocava, esta chamada não faz nada — a faixa segue de onde
+  // estava. Caso contrário, abre agora, dentro do gesto que desbloqueou.
+  openApp("music", { focus: false });
+  openApp("about");
 }
 
 function lockScreen() {
@@ -222,6 +279,8 @@ function lockScreen() {
   setActiveAppName("Início");
   $("lockPass").value = "";
   $("lock").classList.remove("hidden");
+  updateLockMusic();
+  armAutoMusic();
 }
 
 /* ------------------------------------------------------------
@@ -676,9 +735,9 @@ function buildMusic() {
     el("div", { class: "content-area" }, [
       el("iframe", {
         id: "ytPlayer",
-        src: "https://www.youtube-nocookie.com/embed/SJxOaqjeeQ4",
+        src: "https://www.youtube-nocookie.com/embed/SJxOaqjeeQ4?autoplay=1&playsinline=1",
         title: "Player de música",
-        allow: "encrypted-media; picture-in-picture",
+        allow: "autoplay; encrypted-media; picture-in-picture",
         referrerpolicy: "strict-origin-when-cross-origin",
         allowfullscreen: "",
         loading: "lazy",
@@ -734,14 +793,18 @@ function windowControl(kind, symbol, label, onClick) {
   );
 }
 
-function openApp(id) {
+/**
+ * Abre um app. Com `focus: false` a janela aparece atrás das demais e não
+ * assume a barra superior — usado para a música, que toca em segundo plano.
+ */
+function openApp(id, { focus = true } = {}) {
   const app = APPS[id];
   if (!app) return;
 
   closeAllPopovers();
 
   if (openWindows.has(id)) {
-    focusWindow(id);
+    if (focus) focusWindow(id);
     return;
   }
 
@@ -795,7 +858,18 @@ function openApp(id) {
   makeDraggable(win, titlebar);
 
   openWindows.set(id, { win });
-  focusWindow(id);
+  if (focus) {
+    focusWindow(id);
+  } else {
+    win.style.display = "flex";
+    win.style.zIndex = ++zIndex;
+    // Encosta a janela à direita para não ficar escondida atrás da que recebe
+    // o foco logo em seguida.
+    if (!isMobile()) {
+      const right = window.innerWidth - win.offsetWidth - 32;
+      if (right > 0) win.style.left = `${right}px`;
+    }
+  }
   syncDockIndicators();
 }
 
@@ -819,6 +893,7 @@ function closeWindow(id) {
   openWindows.delete(id);
   setActiveAppName("Início");
   syncDockIndicators();
+  if (id === "music") updateLockMusic();
 }
 
 function toggleZoom(win) {
@@ -976,6 +1051,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   $("lockBtn").addEventListener("click", lockScreen);
+
+  $("lockMusic").addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (openWindows.has("music")) stopMusic();
+    else startMusicEarly();
+  });
+
+  armAutoMusic();
   $("prevBtn").addEventListener("click", () => changePage(-1));
   $("nextBtn").addEventListener("click", () => changePage(1));
   $("volumeRange").addEventListener("input", (e) => setVolume(e.target.value));
