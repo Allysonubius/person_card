@@ -1,675 +1,258 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Allyson OS</title>
 
-    <style>
-      body {
-        margin: 0;
-        font-family: Inter;
-        color: white;
-        overflow: hidden;
-      }
+    <title>Allyson OS — Allyson de Oliveira | Engenheiro de Software</title>
+    <meta
+      name="description"
+      content="Cartão de apresentação de Allyson de Oliveira Brandão, Engenheiro de Software Sênior Full Stack. Arquitetura de microsserviços, modernização de legados, Java, Spring Boot, Angular, React e AWS."
+    />
+    <meta name="author" content="Allyson de Oliveira Brandão" />
+    <meta name="theme-color" content="#000000" />
 
-      /* ===== SEU CSS (INALTERADO) ===== */
-      .login {
-        display: flex;
-        height: 100vh;
-        background: url("https://images.unsplash.com/photo-1518770660439-4636190af475")
-          center/cover;
-      }
-      .login-left {
-        width: 35%;
-        padding: 60px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        backdrop-filter: blur(20px);
-        background: rgba(0, 0, 0, 0.65);
-      }
-      .login-left input {
-        padding: 12px;
-        margin-bottom: 10px;
-        border: none;
-        border-radius: 8px;
-        background: #111;
-        color: #aaa;
-      }
-      .login-left button {
-        padding: 12px;
-        background: #3b82f6;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-      }
-      .login-right {
-        width: 65%;
-        padding: 40px;
-        display: flex;
-        flex-direction: column;
-      }
-      .news-container {
-  flex:1;
-  padding-right:5px;
-}
-      .news-card {
-  background: rgba(0,0,0,0.45);
-  padding:16px;
-  border-radius:12px;
-  margin-bottom:12px;
-  cursor:pointer;
+    <!-- Open Graph / redes sociais -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta
+      property="og:title"
+      content="Allyson OS — Allyson de Oliveira | Engenheiro de Software"
+    />
+    <meta
+      property="og:description"
+      content="Engenheiro de Software Sênior Full Stack — microsserviços, modernização de legados, Java, Spring Boot, Angular e AWS."
+    />
+    <meta property="og:image" content="./img/62918698.jpg" />
+    <meta
+      property="og:url"
+      content="https://allysonubius.github.io/person_card/"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Allyson OS — Allyson de Oliveira" />
+    <meta
+      name="twitter:description"
+      content="Engenheiro de Software Sênior · Full Stack. Portfólio interativo."
+    />
+    <meta name="twitter:image" content="./img/62918698.jpg" />
 
-  transition: all 0.3s ease;
-  backdrop-filter: blur(8px);
-  border:1px solid rgba(255,255,255,0.05);
-}
+    <link rel="canonical" href="https://allysonubius.github.io/person_card/" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="apple-touch-icon" href="./img/62918698.jpg" />
 
-.news-card:hover {
-  transform: scale(1.06) translateY(-5px);
-  background: rgba(0,0,0,0.75);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.8);
-  border:1px solid rgba(255,255,255,0.15);
-}
-      .news-title {
-  font-weight:600;
-  font-size:1rem;
-  margin-bottom:5px;
-}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-.news-source {
-  font-size:0.75rem;
-  opacity:0.5;
-}
-      .pagination {
-        display: flex;
-        justify-content: space-between;
-      }
-      .clock-login {
-        position: absolute;
-        top: 20px;
-        right: 40px;
-      }
-      .desktop {
-        width: 100%;
-        height: 100vh;
-
-        background: url("./img/freshness-beauty-nature-wet-drops-generated-by-ai.jpg")
-          no-repeat center;
-        background-size: cover;
-      }
-      .hidden {
-        display: none;
-      }
-      .window {
-        position: absolute;
-        width: 500px;
-        height: 350px;
-        background: rgba(0, 0, 0, 0.7);
-        backdrop-filter: blur(20px);
-        border-radius: 12px;
-        resize: both;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-      }
-      .title {
-        background: #111;
-        padding: 8px;
-        display: flex;
-        justify-content: space-between;
-        cursor: move;
-      }
-      .content-area {
-        flex: 1;
-        position: relative;
-      }
-      .content-area iframe {
-        width: 100%;
-        height: 100%;
-        border: 0;
-      }
-      .taskbar {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        height: 45px;
-        background: #111;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .left {
-        padding: 0 10px;
-      }
-      .center {
-        display: flex;
-        gap: 10px;
-      }
-      .right {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding-right: 10px;
-      }
-      .volume-panel {
-        position: absolute;
-        bottom: 55px;
-        right: 10px;
-        background: #111;
-        padding: 10px;
-        border-radius: 10px;
-      }
-
-      /* ===== NOVO (TASKBAR + PREVIEW) ===== */
-      .task-item {
-        background: #222;
-        padding: 5px 10px;
-        border-radius: 6px;
-        cursor: pointer;
-        position: relative;
-      }
-      .task-item:hover {
-        background: #444;
-      }
-
-      .preview {
-        position: absolute;
-        bottom: 50px;
-        left: 0;
-        width: 200px;
-        height: 120px;
-        background: #000;
-        border-radius: 8px;
-        overflow: hidden;
-        display: none;
-      }
-      .preview iframe {
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-      }
-      .task-item:hover .preview {
-        display: block;
-      }
-    </style>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./app.js" defer></script>
   </head>
 
   <body>
-    <!-- LOGIN -->
-    <div id="login" class="login">
-      <div class="login-left">
-        <h1>Allyson OS</h1>
-        <input value="allyson" readonly />
-        <input type="password" value="••••••••" readonly />
-        <button onclick="loginSystem()">Entrar</button>
+    <div class="wallpaper"></div>
+
+    <!-- ======================= TELA DE BLOQUEIO ======================= -->
+    <div id="lock" class="lock">
+      <div class="lock-clock">
+        <div class="lock-date" id="lockDate"></div>
+        <div class="lock-time" id="lockTime">--:--</div>
       </div>
 
-      <div class="login-right">
-        <div class="clock-login" id="loginClock"></div>
-        <div class="news-container" id="newsList"></div>
-        <div class="pagination">
-          <button onclick="prevPage()">◀</button>
-          <button onclick="nextPage()">▶</button>
-        </div>
+      <div class="lock-user">
+        <img
+          class="lock-avatar"
+          src="./img/62918698.jpg"
+          alt="Foto de perfil de Allyson de Oliveira"
+        />
+        <div class="lock-name">Allyson de Oliveira</div>
+        <div class="lock-role">Engenheiro de Software Sênior</div>
+
+        <form class="lock-field" id="lockForm">
+          <label class="sr-only" for="lockPass">Senha</label>
+          <input
+            id="lockPass"
+            type="password"
+            placeholder="Digite a senha"
+            autocomplete="off"
+          />
+          <button
+            class="lock-go"
+            id="lockGo"
+            type="submit"
+            aria-label="Desbloquear"
+          >
+            →
+          </button>
+        </form>
+
+        <p class="lock-hint">Sem senha — pressione Enter para entrar</p>
       </div>
     </div>
 
-    <!-- DESKTOP -->
+    <!-- ======================== ÁREA DE TRABALHO ======================== -->
     <div id="desktop" class="desktop hidden">
-      <div
-        id="menu"
-        class="hidden"
-        style="
-          position: absolute;
-          bottom: 45px;
-          left: 10px;
-          background: #111;
-          padding: 10px;
-        "
-      >
-        <div onclick="openApp('about')">👤 Sobre</div>
-        <div onclick="openApp('portfolio')">💼 Portfólio</div>
-        <div onclick="openApp('contact')">📲 Contato</div>
-        <div onclick="openApp('music')">🎧 Música</div>
-        <hr />
-        <div onclick="logout()">🚪 Logoff</div>
+      <!-- BARRA SUPERIOR -->
+      <div class="menubar">
+        <div class="menubar-left">
+          <button
+            id="systemBtn"
+            class="menu-item strong"
+            type="button"
+            aria-label="Menu do sistema"
+            aria-expanded="false"
+          >
+            ◆
+          </button>
+          <button id="activeApp" class="menu-item strong" type="button">
+            Início
+          </button>
+          <span class="menu-item decor">Arquivo</span>
+          <span class="menu-item decor">Editar</span>
+          <span class="menu-item decor">Visualizar</span>
+          <span class="menu-item decor">Janela</span>
+          <span class="menu-item decor">Ajuda</span>
+        </div>
+
+        <div class="menubar-right">
+          <button
+            id="settingsBtn"
+            class="menu-item"
+            type="button"
+            aria-label="Ajustes rápidos"
+            aria-expanded="false"
+          >
+            <span id="soundIcon">🔊</span>
+          </button>
+          <span class="menu-item decor">📶</span>
+          <span class="menu-item decor">🔋</span>
+          <button
+            id="clockBtn"
+            class="menu-item menubar-clock"
+            type="button"
+            aria-label="Painel de notícias"
+            aria-expanded="false"
+          >
+            <span id="menuDate"></span> <span id="menuTime">--:--</span>
+          </button>
+        </div>
       </div>
 
+      <!-- MENU DO SISTEMA -->
+      <div id="systemMenu" class="popover hidden">
+        <button type="button" data-open="about">
+          <span aria-hidden="true">💻</span> Sobre este sistema
+        </button>
+        <hr />
+        <button type="button" data-open="portfolio">
+          <span aria-hidden="true">💼</span> Portfólio
+        </button>
+        <button type="button" data-open="contact">
+          <span aria-hidden="true">✉️</span> Contato
+        </button>
+        <button type="button" data-open="music">
+          <span aria-hidden="true">🎵</span> Música
+        </button>
+        <hr />
+        <button id="lockBtn" type="button">
+          <span aria-hidden="true">🔒</span> Bloquear tela
+        </button>
+      </div>
+
+      <!-- AJUSTES RÁPIDOS -->
+      <div id="quickSettings" class="popover hidden">
+        <div class="cc-tile">
+          <div class="cc-label">Som</div>
+          <div class="cc-row">
+            <span aria-hidden="true">🔈</span>
+            <label class="sr-only" for="volumeRange">Volume</label>
+            <input id="volumeRange" type="range" min="0" max="100" value="35" />
+            <span id="volumeLabel">35%</span>
+          </div>
+        </div>
+
+        <div class="cc-grid">
+          <div class="cc-tile"><span aria-hidden="true">📶</span> Wi-Fi</div>
+          <div class="cc-tile"><span aria-hidden="true">🔵</span> Bluetooth</div>
+          <div class="cc-tile"><span aria-hidden="true">🌙</span> Foco</div>
+        </div>
+      </div>
+
+      <!-- PAINEL DE NOTÍCIAS -->
+      <aside id="newsPanel" class="news-panel hidden">
+        <div class="nc-header">
+          <h2>Notícias</h2>
+          <span>Hacker News</span>
+        </div>
+
+        <div class="news-container" id="newsList" aria-live="polite"></div>
+
+        <nav class="pagination" aria-label="Paginação de notícias">
+          <button id="prevBtn" type="button" aria-label="Página anterior">
+            ◀
+          </button>
+          <span id="pageLabel">1 / 3</span>
+          <button id="nextBtn" type="button" aria-label="Próxima página">
+            ▶
+          </button>
+        </nav>
+      </aside>
+
+      <!-- ÍCONES DA ÁREA DE TRABALHO -->
+      <div class="desktop-icons">
+        <button class="desktop-icon" type="button" data-open="about">
+          <span class="ico" aria-hidden="true">📄</span><span>Currículo</span>
+        </button>
+        <button class="desktop-icon" type="button" data-open="portfolio">
+          <span class="ico" aria-hidden="true">🗂️</span><span>Projetos</span>
+        </button>
+      </div>
+
+      <!-- JANELAS -->
       <div id="windows"></div>
 
-      <div class="taskbar">
-        <div class="left" onclick="toggleMenu()">🪟</div>
-        <div class="center" id="tasks"></div>
+      <!-- DOCK -->
+      <div class="dock-wrap">
+        <div class="dock" id="dock" role="toolbar" aria-label="Dock">
+          <button class="dock-item" type="button" data-open="about">
+            <span aria-hidden="true">👤</span>
+            <span class="dock-tooltip">Sobre mim</span>
+          </button>
+          <button class="dock-item" type="button" data-open="portfolio">
+            <span aria-hidden="true">💼</span>
+            <span class="dock-tooltip">Portfólio</span>
+          </button>
+          <button class="dock-item" type="button" data-open="contact">
+            <span aria-hidden="true">✉️</span>
+            <span class="dock-tooltip">Contato</span>
+          </button>
+          <button class="dock-item" type="button" data-open="music">
+            <span aria-hidden="true">🎵</span>
+            <span class="dock-tooltip">Música</span>
+          </button>
 
-        <div class="right">
-          <div onclick="toggleVolume()" id="sound">🔊</div>
+          <div class="dock-separator" aria-hidden="true"></div>
 
-          <div id="volumePanel" class="volume-panel hidden">
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value="20"
-              oninput="setVolume(this.value)"
-            />
-            <span id="volumeLabel">20%</span>
-          </div>
-
-          <span id="clock"></span>
+          <button
+            class="dock-item"
+            type="button"
+            data-external="https://www.linkedin.com/in/allyson-de-oliveira-6b3596164/"
+          >
+            <span aria-hidden="true">🔗</span>
+            <span class="dock-tooltip">LinkedIn</span>
+          </button>
+          <button
+            class="dock-item"
+            type="button"
+            data-external="https://github.com/Allysonubius"
+          >
+            <span aria-hidden="true">🐙</span>
+            <span class="dock-tooltip">GitHub</span>
+          </button>
         </div>
       </div>
     </div>
-
-    <script>
-      // LOGIN
-      function loginSystem() {
-        login.classList.add("hidden");
-        desktop.classList.remove("hidden");
-        openApp("music");
-
-        setTimeout(() => {
-          let iframe = document.querySelector("#ytPlayer");
-          if (iframe) {
-            iframe.src += "?autoplay=1";
-          }
-        }, 400);
-      }
-
-      // CLOCK
-      setInterval(() => {
-        loginClock.innerText = new Date().toLocaleTimeString();
-        clock.innerText = new Date().toLocaleTimeString();
-      }, 1000);
-
-      // NEWS (igual)
-      let newsData = [],
-        page = 0;
-      async function loadNews() {
-        try {
-          let res = await fetch(
-            "https://hacker-news.firebaseio.com/v0/topstories.json",
-          );
-          let ids = await res.json();
-          for (let i = 0; i < 30; i++) {
-            let item = await fetch(
-              `https://hacker-news.firebaseio.com/v0/item/${ids[i]}.json`,
-            ).then((r) => r.json());
-            newsData.push(item);
-          }
-          renderNews();
-        } catch {
-          newsData = [{ title: "Cloud cresce", url: "#" }];
-          renderNews();
-        }
-      }
-      function renderNews() {
-        newsList.innerHTML = "";
-        let start = page * 10;
-        let end = start + 10;
-        newsData.slice(start, end).forEach((n) => {
-          let div = document.createElement("div");
-          div.className = "news-card";
-          let domain = n.url ? new URL(n.url).hostname : "tech";
-          div.innerHTML = `<div class="news-title">${n.title}</div><div class="news-source">${domain}</div>`;
-          div.onclick = () => window.open(n.url || "#");
-          newsList.appendChild(div);
-        });
-      }
-      function nextPage() {
-        if ((page + 1) * 10 < newsData.length) {
-          page++;
-          renderNews();
-        }
-      }
-      function prevPage() {
-        if (page > 0) {
-          page--;
-          renderNews();
-        }
-      }
-      loadNews();
-
-      // VOLUME
-      function toggleVolume() {
-        volumePanel.classList.toggle("hidden");
-      }
-      function setVolume(val) {
-        volumeLabel.innerText = val + "%";
-        sound.innerText = val == 0 ? "🔇" : "🔊";
-      }
-
-      // WINDOWS
-      let z = 1;
-
-      function toggleMenu() {
-        menu.classList.toggle("hidden");
-      }
-
-      function openApp(id) {
-        let existing = [...windows.children].find((w) => w.dataset.app === id);
-        if (existing) {
-          existing.style.display = "block";
-          existing.style.zIndex = ++z;
-          return;
-        }
-
-        let win = document.createElement("div");
-        win.className = "window";
-        win.dataset.app = id;
-        win.style.top = "100px";
-        win.style.left = "100px";
-
-        let content = "";
-
-        if (id === "about") {
-  content = `
-  <div style="height:100%;display:flex;flex-direction:column;background:#0b0b0b;font-family:Inter;overflow:auto">
-
-    <!-- HEADER estilo browser -->
-    <div style="background:#111;padding:10px;display:flex;align-items:center;gap:10px">
-      <a 
-  href="https://www.linkedin.com/in/allyson-de-oliveira-6b3596164/" 
-  target="_blank"
-  style="margin-left:10px;color:#3b82f6;font-size:12px;text-decoration:none;cursor:pointer">
-  https://www.linkedin.com/in/allyson-de-oliveira-6b3596164/
-</a>
-    </div>
-
-    <!-- CONTEUDO -->
-    <div style="padding:25px;color:#ddd">
-
-      <!-- PERFIL -->
-      <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
-        
-        <img src="./img/62918698.jpg" 
-             style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid #3b82f6">
-
-        <div>
-          <h1 style="margin:0;color:#fff">Allyson de Oliveira</h1>
-          <p style="margin:5px 0;color:#3b82f6;font-weight:600">
-            Senior Software Engineer | Full Stack
-          </p>
-          <p style="margin:0;font-size:13px;color:#888">
-            Java • Spring Boot • Angular • React • Cloud • Microservices
-          </p>
-        </div>
-      </div>
-
-      <hr style="border-color:#222;margin:20px 0">
-
-      <!-- SOBRE -->
-      <h2>👨‍💻 Sobre mim</h2>
-      <p>
-        Sou um desenvolvedor Full Stack com mais de 6 anos de experiência criando
-        aplicações escaláveis, modernas e de alta performance. Atuo com foco em
-        arquitetura de sistemas, desenvolvimento de APIs robustas e interfaces
-        eficientes.
-      </p>
-
-      <p>
-        Tenho forte atuação em ambientes corporativos, participando de projetos
-        de transformação digital, migração de sistemas legados e construção de
-        soluções cloud-native.
-      </p>
-
-      <p>
-        Meu perfil é altamente analítico, com facilidade em resolver problemas
-        complexos, otimizar performance e entregar soluções com qualidade e
-        escalabilidade.
-      </p>
-
-      <!-- EXPERIENCIA -->
-      <h2>🚀 Experiência</h2>
-      <div style="display:flex;flex-direction:column;gap:15px">
-
-  <div style="background:#111;padding:15px;border-radius:10px;border-left:4px solid #3b82f6">
-    <h3 style="margin:0;color:#fff">MJV Technology & Innovation</h3>
-    <p style="margin:5px 0;color:#3b82f6">Assessor de Tecnologia (Pleno/Senior)</p>
-    <p style="margin:0;font-size:12px;color:#888">2022 - Atual</p>
-    <p style="margin-top:8px;color:#ccc">
-      Atuação em projetos enterprise, arquitetura de sistemas e desenvolvimento
-      de soluções escaláveis com foco em performance e cloud.
-    </p>
-  </div>
-
-  <div style="background:#111;padding:15px;border-radius:10px;border-left:4px solid #22c55e">
-    <h3 style="margin:0;color:#fff">Compass UOL</h3>
-    <p style="margin:5px 0;color:#22c55e">Desenvolvedor Pleno II</p>
-    <p style="margin:0;font-size:12px;color:#888">2021 - 2022</p>
-    <p style="margin-top:8px;color:#ccc">
-      Desenvolvimento de aplicações modernas com foco em cloud, APIs REST e
-      integração de sistemas distribuídos.
-    </p>
-  </div>
-
-  <div style="background:#111;padding:15px;border-radius:10px;border-left:4px solid #f59e0b">
-    <h3 style="margin:0;color:#fff">Indra</h3>
-    <p style="margin:5px 0;color:#f59e0b">Desenvolvedor Pleno I</p>
-    <p style="margin:0;font-size:12px;color:#888">2020 - 2021</p>
-    <p style="margin-top:8px;color:#ccc">
-      Atuação em sistemas corporativos com integrações complexas e manutenção
-      de aplicações legadas.
-    </p>
-  </div>
-
-  <div style="background:#111;padding:15px;border-radius:10px;border-left:4px solid #a855f7">
-    <h3 style="margin:0;color:#fff">Venha Pra Nuvem</h3>
-    <p style="margin:5px 0;color:#a855f7">Desenvolvedor Júnior II</p>
-    <p style="margin:0;font-size:12px;color:#888">2019 - 2020</p>
-    <p style="margin-top:8px;color:#ccc">
-      Início da carreira com foco em desenvolvimento web, APIs e boas práticas
-      de programação.
-    </p>
-  </div>
-
-  <div style="background:#111;padding:15px;border-radius:10px;border-left:4px solid #6b7280">
-    <h3 style="margin:0;color:#fff">Centro Espírita Beneficente União do Vegetal</h3>
-    <p style="margin:5px 0;color:#6b7280">Office Boy</p>
-    <p style="margin:0;font-size:12px;color:#888">2015 - 2018</p>
-    <p style="margin-top:8px;color:#ccc">
-      Primeira experiência profissional, desenvolvimento de responsabilidade,
-      organização e disciplina no ambiente de trabalho.
-    </p>
-  </div>
-
-</div>
-
-      <!-- TECNOLOGIAS -->
-      <h2>🧠 Stack Tecnológica</h2>
-      <ul>
-        <li>Backend: Java, Spring Boot, APIs REST/SOAP</li>
-        <li>Frontend: Angular, React, JavaScript moderno</li>
-        <li>DevOps: Docker, Git, CI/CD</li>
-        <li>Arquitetura: Microservices, Clean Architecture</li>
-      </ul>
-
-      <!-- DIFERENCIAL -->
-      <h2>🔥 Diferenciais</h2>
-      <p>
-        • Forte capacidade de liderança técnica  
-        • Experiência com sistemas de alta escala  
-        • Foco em performance e boas práticas  
-        • Visão de produto + tecnologia  
-      </p>
-
-      <!-- IDIOMAS -->
-      <h2>🌎 Idiomas</h2>
-      <p>Português (nativo), Inglês e Espanhol (intermediário)</p>
-
-    </div>
-  </div>
-  `;
-}
-if (id === "portfolio") {
-  content = `
-  <div style="height:100%;display:flex;flex-direction:column">
-
-    <!-- barra fake -->
-    <div style="background:#111;padding:8px;font-size:12px;color:#aaa">
-      🌐 notion.site/portfolio
-    </div>
-
-    <!-- preview fake -->
-    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center">
-      
-      <p style="color:#aaa">Pré-visualização do portfólio</p>
-
-      <button onclick="window.open('https://jumpy-gasosaurus-23e.notion.site/b370a23b47f148f48c3b7630058b0f99','_blank')"
-        style="padding:12px 20px;background:#3b82f6;border:none;border-radius:8px;color:white;cursor:pointer">
-        🔓 Abrir Portfólio
-      </button>
-
-    </div>
-
-  </div>
-  `;
-}
-        if (id === "contact") {
-          content = `
-  <div style="padding:20px;text-align:center">
-    <h2>📲 Contato</h2>
-
-    <p><b>Telefone:</b><br>(61) 99194-2160</p>
-    <p><b>Email:</b><br>allysontrabalho7@gmail.com</p>
-
-    <br>
-
-    <a href="https://wa.me/5561991942160" target="_blank"
-       style="display:inline-block;
-              padding:12px 20px;
-              background:#25D366;
-              color:white;
-              border-radius:8px;
-              text-decoration:none;
-              font-weight:bold;">
-       💬 Falar no WhatsApp
-    </a>
-  </div>
-  `;
-        }
-
-        if (id === "music") {
-          content = `
-  <div class="content-area">
-    <iframe 
-      id="ytPlayer"
-      src="https://www.youtube-nocookie.com/embed/SJxOaqjeeQ4"
-      allow="autoplay; encrypted-media"
-      referrerpolicy="strict-origin-when-cross-origin"
-      allowfullscreen>
-    </iframe>
-  </div>`;
-        }
-
-        win.innerHTML = `
- <div class="title">
- ${id}
- <div>
- <button onclick="min(this)">_</button>
- <button onclick="max(this)">⬜</button>
- <button onclick="closeWin(this,'${id}')">X</button>
- </div>
- </div>
- ${content}
- `;
-
-        windows.appendChild(win);
-        drag(win);
-        task(id, win);
-        win.style.zIndex = ++z;
-      }
-
-      // 🔥 TASK MELHORADO
-      function task(id, win) {
-        let t = document.createElement("div");
-        t.className = "task-item";
-        t.innerText = id;
-
-        let preview = document.createElement("div");
-        preview.className = "preview";
-
-        let iframe = win.querySelector("iframe");
-        if (iframe) {
-          let clone = iframe.cloneNode();
-          preview.appendChild(clone);
-        }
-
-        t.appendChild(preview);
-
-        t.onclick = () => {
-          if (win.style.display === "none") {
-            win.style.display = "block";
-            win.style.zIndex = ++z;
-          } else {
-            win.style.display = "none";
-          }
-        };
-
-        tasks.appendChild(t);
-      }
-
-      function closeWin(btn, id) {
-        btn.closest(".window").remove();
-        [...tasks.children].forEach((t) => {
-          if (t.innerText === id) t.remove();
-        });
-      }
-
-      function min(btn) {
-        btn.closest(".window").style.display = "none";
-      }
-
-      function max(btn) {
-        let w = btn.closest(".window");
-        w.style.width = "100%";
-        w.style.height = "calc(100% - 45px)";
-        w.style.top = 0;
-        w.style.left = 0;
-      }
-
-      // 🔥 DRAG COM LIMITE
-      function drag(el) {
-        let is = false,
-          ox = 0,
-          oy = 0;
-
-        el.querySelector(".title").onmousedown = (e) => {
-          is = true;
-          ox = e.clientX - el.offsetLeft;
-          oy = e.clientY - el.offsetTop;
-        };
-
-        document.onmouseup = () => (is = false);
-
-        document.onmousemove = (e) => {
-          if (!is) return;
-
-          let x = e.clientX - ox;
-          let y = e.clientY - oy;
-
-          let maxX = window.innerWidth - el.offsetWidth;
-          let maxY = window.innerHeight - el.offsetHeight - 45;
-
-          if (x < 0) x = 0;
-          if (y < 0) y = 0;
-          if (x > maxX) x = maxX;
-          if (y > maxY) y = maxY;
-
-          el.style.left = x + "px";
-          el.style.top = y + "px";
-        };
-      }
-
-      function logout(){
-        desktop.classList.add('hidden');
-        login.classList.remove('hidden');
-
-        // limpa janelas abertas
-        windows.innerHTML = '';
-        tasks.innerHTML = '';
-    }
-    </script>
   </body>
 </html>
