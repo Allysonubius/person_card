@@ -636,15 +636,17 @@ button {
   resize: none;
 }
 
-.window.is-minimizing {
-  animation: minimize 0.28s var(--ease) forwards;
-}
-
-@keyframes minimize {
-  to {
-    opacity: 0;
-    transform: scale(0.3) translateY(60vh);
-  }
+/**
+ * Janela minimizada: fica invisível e fora de alcance, mas permanece
+ * renderizada. `display:none` interromperia a reprodução do player.
+ */
+.window.is-minimized {
+  opacity: 0;
+  transform: scale(0.3) translateY(60vh);
+  pointer-events: none;
+  transition:
+    opacity 0.28s var(--ease),
+    transform 0.28s var(--ease);
 }
 
 /* Barra de título com controles de janela */

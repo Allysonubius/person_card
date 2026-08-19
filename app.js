@@ -212,17 +212,42 @@ function changePage(delta) {
    ------------------------------------------------------------ */
 
 const YT_ORIGIN = "https://www.youtube-nocookie.com";
+const MUSIC_ID = "SJxOaqjeeQ4";
+const PLAYER_ENDED = 0; // código de estado "vídeo terminou"
+
 let audioUnlocked = false;
+
+/** Envia uma mensagem ao player embutido. */
+function ytPost(payload) {
+  const frame = $("ytPlayer");
+  if (!frame || !frame.contentWindow) return;
+  frame.contentWindow.postMessage(JSON.stringify(payload), YT_ORIGIN);
+}
 
 /** Envia um comando à API do player embutido. */
 function ytCommand(func, args = []) {
-  const frame = $("ytPlayer");
-  if (!frame || !frame.contentWindow) return;
-  frame.contentWindow.postMessage(
-    JSON.stringify({ event: "command", func, args }),
-    YT_ORIGIN,
-  );
+  ytPost({ event: "command", func, args });
 }
+
+/**
+ * Rede de segurança do loop: se o vídeo chegar ao fim sem que o parâmetro
+ * `loop` o reinicie, voltamos ao começo e mandamos tocar de novo.
+ */
+window.addEventListener("message", (event) => {
+  if (event.origin !== YT_ORIGIN) return; // só aceita mensagens do player
+
+  let data;
+  try {
+    data = JSON.parse(event.data);
+  } catch {
+    return;
+  }
+
+  if (data.event === "onStateChange" && data.info === PLAYER_ENDED) {
+    ytCommand("seekTo", [0, true]);
+    ytCommand("playVideo");
+  }
+});
 
 /** Tira o player do mudo e aplica o volume atual dos ajustes rápidos. */
 function unmutePlayer() {
@@ -280,14 +305,18 @@ function unlock() {
 
 function lockScreen() {
   closeAllPopovers();
-  $("desktop").classList.add("hidden");
-  $("windows").replaceChildren();
-  openWindows.clear();
-  syncDockIndicators();
+
+  // Fecha tudo menos a música: destruir o iframe reiniciaria a faixa. A área
+  // de trabalho continua montada por baixo da tela de bloqueio, apenas inerte.
+  for (const id of [...openWindows.keys()]) {
+    if (id !== "music") closeWindow(id);
+  }
+
+  startMusic(); // recria só se o usuário tiver fechado o player
+  $("desktop").setAttribute("inert", "");
   setActiveAppName("Início");
   $("lockPass").value = "";
   $("lock").classList.remove("hidden");
-  startMusic(); // a trilha volta junto com a tela de bloqueio
 }
 
 /* ------------------------------------------------------------
@@ -740,17 +769,30 @@ function buildContact() {
 function buildMusic() {
   // mute=1 é o que permite o autoplay no carregamento; o som entra depois,
   // no primeiro gesto do usuário. enablejsapi=1 habilita os comandos.
+  // loop=1 exige playlist com o próprio id para repetir um vídeo único.
+  const params = new URLSearchParams({
+    autoplay: "1",
+    mute: "1",
+    playsinline: "1",
+    enablejsapi: "1",
+    loop: "1",
+    playlist: MUSIC_ID,
+    rel: "0",
+  });
+
   const frame = el("iframe", {
     id: "ytPlayer",
-    src: `${YT_ORIGIN}/embed/SJxOaqjeeQ4?autoplay=1&mute=1&playsinline=1&enablejsapi=1`,
+    src: `${YT_ORIGIN}/embed/${MUSIC_ID}?${params}`,
     title: "Player de música",
     allow: "autoplay; encrypted-media; picture-in-picture",
     referrerpolicy: "strict-origin-when-cross-origin",
     allowfullscreen: "",
   });
 
-  // Se o som já foi liberado, um player recriado volta com áudio.
   frame.addEventListener("load", () => {
+    // Handshake necessário para o player passar a emitir eventos de estado.
+    ytPost({ event: "listening" });
+    // Se o som já foi liberado, um player recriado volta com áudio.
     if (audioUnlocked) setTimeout(unmutePlayer, 400);
   });
 
@@ -779,7 +821,7 @@ function setActiveAppName(name) {
 function focusWindow(id) {
   const entry = openWindows.get(id);
   if (!entry) return;
-  entry.win.style.display = "flex";
+  entry.win.classList.remove("is-minimized");
   entry.win.style.zIndex = ++zIndex;
   for (const [key, other] of openWindows) {
     other.win.classList.toggle("is-focused", key === id);
@@ -872,7 +914,6 @@ function openApp(id, { focus = true } = {}) {
   if (focus) {
     focusWindow(id);
   } else {
-    win.style.display = "flex";
     win.style.zIndex = ++zIndex;
     // Encosta a janela à direita para não ficar escondida atrás da que recebe
     // o foco logo em seguida.
@@ -887,13 +928,8 @@ function openApp(id, { focus = true } = {}) {
 function minimizeWindow(id) {
   const entry = openWindows.get(id);
   if (!entry) return;
-  const { win } = entry;
-  win.classList.add("is-minimizing");
-  setTimeout(() => {
-    win.classList.remove("is-minimizing");
-    win.style.display = "none";
-  }, 280);
-  win.classList.remove("is-focused");
+  entry.win.classList.add("is-minimized");
+  entry.win.classList.remove("is-focused");
   setActiveAppName("Início");
 }
 
